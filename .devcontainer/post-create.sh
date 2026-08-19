@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Warm the host-side Java and Node toolchains (installed via devcontainer features)
+# so the Java and TypeScript language servers can resolve the classpath/types
+# immediately — without this, IntelliSense has nothing to work against, since the
+# app itself only builds inside the nested docker compose containers below.
+npm ci --prefix frontend >/tmp/frontend-warmup.log 2>&1 &
+frontend_warmup_pid=$!
+mvn -q -f backend/pom.xml dependency:go-offline >/tmp/backend-warmup.log 2>&1 &
+backend_warmup_pid=$!
+
 for attempt in $(seq 1 30); do
   if docker info >/dev/null 2>&1; then
     break
@@ -36,6 +45,13 @@ for attempt in $(seq 1 60); do
 
   sleep 2
 done
+
+if ! wait "${frontend_warmup_pid}"; then
+  echo "Warning: frontend dependency warm-up (npm ci) failed; see /tmp/frontend-warmup.log." >&2
+fi
+if ! wait "${backend_warmup_pid}"; then
+  echo "Warning: backend dependency warm-up (mvn dependency:go-offline) failed; see /tmp/backend-warmup.log." >&2
+fi
 
 echo
 echo "Assessment environment ready."
