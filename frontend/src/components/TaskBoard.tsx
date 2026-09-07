@@ -5,6 +5,8 @@ import TaskItem from './TaskItem';
 export default function TaskBoard({ projectId }) {
   const [tasks, setTasks] = useState([]);
 
+
+
   useEffect(() => {
     getTasks(projectId).then((data) => {
       setTasks(data);
@@ -12,10 +14,14 @@ export default function TaskBoard({ projectId }) {
   }, []);
 
   const handleToggle = (task) => {
+  
     const next = task.status === 'DONE' ? 'TODO' : 'DONE';
     task.status = next;
     setTasks(tasks);
     updateTaskStatus(task.id, next);
+
+    
+
   };
 
   return (

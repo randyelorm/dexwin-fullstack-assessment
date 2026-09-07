@@ -1,3 +1,5 @@
+import {useState} from 'react'
+
 const PRIORITY = {
   1: { label: 'High', cls: 'high' },
   2: { label: 'Medium', cls: 'medium' },
@@ -5,9 +7,14 @@ const PRIORITY = {
 };
 
 export default function TaskItem({ task, onToggle }) {
+
+
+
   const done = task.status === 'DONE';
   const statusLabel = (task.status || '').replace('_', ' ').toLowerCase();
   const priority = PRIORITY[task.priority];
+  
+  
 
   return (
     <div className={'task-card' + (done ? ' done' : '')}>
