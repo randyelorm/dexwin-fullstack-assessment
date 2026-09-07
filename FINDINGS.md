@@ -8,5 +8,5 @@ a. why the button title state does not automatically change when the user clicks
 b. why user actions on project, affects the others: the task.id's are not unique. 
 
 Solutions: 
-a. re-render the component after button is clicked: not a re-render issue. 
+a. re-render the component after button is clicked: probablly not a re-render issue. 
 b. get unique id numbers for task.id
